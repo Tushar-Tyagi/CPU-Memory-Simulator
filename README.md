@@ -5,4 +5,3 @@
 [![HitCount](http://hits.dwyl.io/tushar-tyagi/CPU-Memory-Simulator.svg)](http://hits.dwyl.io/tushar-tyagi/CPU-Memory-Simulator)
 
 A c++ programe to get the cache miss rate.
-In Progress.
