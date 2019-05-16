@@ -54,7 +54,7 @@ int main()
             else if(i==2) cout<<"Cache Size = 4096, ";
             else          cout<<"Cache Size = 8192, ";
 
-            cout<<"Miss ratio= "<<missNo(1,0,csm[i],bsm[j])<<"/"<<total<<endl;
+            cout<<"Miss ratio= "<<missNo(1,1,csm[i],bsm[j])<<"/"<<total<<endl;
         }
         cout<<endl;
     }
@@ -81,6 +81,24 @@ int main()
     }
 
     cout<<"First in First Out:"<<endl;
+    for(int j=0;j<2;j++){ //Block size: 16,32
+
+        if(j==0) cout<<"Block Size = 16 "<<endl;
+        else cout<<"Block Size = 32 "<<endl;
+
+        for(int i=0;i<4;i++){ //cache size: 1024,2048,4096,8192
+            if(i==0) {
+                cout<<"Cache Size = 1024, ";
+
+            }
+            else if(i==1) cout<<"Cache Size = 2048, ";
+            else if(i==2) cout<<"Cache Size = 4096, ";
+            else          cout<<"Cache Size = 8192, ";
+
+            cout<<"Miss ratio= "<<missNo(4,1,csm[i],bsm[j])<<"/"<<total<<endl;
+        }
+        cout<<endl;
+    }
 
     return 0;
 
@@ -107,7 +125,7 @@ int missNo(int n, bool rp, int cachesz, int bsize)
     if(rp==0)
     {
         long cache[cachesz/(n*bsize)][n];
-        int table[cachesz/(n*bsize)][n+1]={0};
+        int table[cachesz/(n*bsize)][n+1];
 
         for(int i=0;i<cachesz/(n*bsize);i++)
             for(int j=0;j<n;j++) cache[i][j]=9999999999;
@@ -117,7 +135,7 @@ int missNo(int n, bool rp, int cachesz, int bsize)
 
 
         while (getline(address, hex))
-        { /////////////////////////////////////////////////num to byte ha, block dhumdna ha be.
+        {
             num=hexToDec(hex);
             long block=num/bsize;
             int set=block%(cachesz/(n*bsize));
@@ -164,7 +182,38 @@ int missNo(int n, bool rp, int cachesz, int bsize)
     }
     else
     {
+        long cache[cachesz/(n*bsize)][n+1];
+        for(int i=0;i<cachesz/(n*bsize);i++)
+            for(int j=0;j<n+1;j++){
+                if(j==n)    cache[i][j]=0;
+                else cache[i][j]=9999999999;
+            }
 
+            while (getline(address, hex))
+            {
+                num=hexToDec(hex);
+                long block=num/bsize;
+                int set=block%(cachesz/(n*bsize));
+                int flag=0;
+                for(int i=0;i<n;i++){
+                    if(cache[set][i]==block){
+                        //cout<<"hi<"<<endl;
+                        flag=1;
+                        break;
+                    }
+                }
+
+                if(flag==0)
+                {
+                    miss++;
+                    int x=cache[set][n];
+                    cache[set][x]=block;
+                    if(cache[set][n]==n-1) cache[set][n]=0;
+                    else cache[set][n]++;
+                }
+
+            }
+            return miss;
     }
 }
 
